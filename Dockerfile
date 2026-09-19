@@ -22,8 +22,13 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt .
+
+# Install torch CPU-only first (avoids ~2GB of CUDA libraries)
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+
+# Then install the rest of the requirements (torch is already satisfied)
+RUN pip install --no-cache-dir -r requirements.txt
 
 
 # ============================================================
