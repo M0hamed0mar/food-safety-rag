@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="en" dir="ltr" class="h-full">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAG System</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50:  '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/custom.css" />
+</head>
+
+<body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors">
+
+<div class="flex h-screen overflow-hidden">
+
+    <!-- ============================================================
+         SIDEBAR
+         ============================================================ -->
+    <aside id="sidebar"
+           class="fixed md:relative inset-y-0 left-0 z-40 w-72 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0">
+        
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white text-xs font-bold">
+                    RS
+                </div>
+                <span class="font-semibold text-sm">RAG System</span>
+            </div>
+            <button id="closeSidebarBtn"
+                    class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                    title="Close sidebar">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- New Chat Button -->
+        <div class="p-3">
+            <button id="newChatBtn"
+                    class="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white font-medium text-sm py-2 px-3 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>New Chat</span>
+            </button>
+        </div>
+
+        <!-- Chat List -->
+        <div id="chatList" class="flex-1 overflow-y-auto px-2 space-y-1">
+            <div class="text-center text-slate-400 dark:text-slate-600 py-8 text-xs">
+                No conversations yet
+            </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400 dark:text-slate-600">
+            <span>v0.2.0</span>
+            <button id="themeToggle" title="Toggle theme" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <svg id="iconSun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <svg id="iconMoon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Sidebar Backdrop (mobile) -->
+    <div id="sidebarBackdrop"
+         class="fixed inset-0 bg-black/40 z-30 hidden"></div>
+
+    <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+        <!-- HEADER -->
+        <header class="sticky top-0 z-20 flex items-center justify-between gap-3 px-4 py-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <!-- Toggle Sidebar (visible when sidebar is hidden) -->
+                <button id="openSidebarBtn"
+                        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                        title="Open sidebar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+
+                <h1 class="text-base font-semibold" id="chatTitle">New Chat</h1>
+            </div>
+        </header>
+
+        <!-- MESSAGES -->
+        <main id="messages"
+              class="flex-1 overflow-y-auto px-4 py-6 space-y-4 max-w-4xl w-full mx-auto"></main>
+
+        <!-- INPUT -->
+        <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <div class="max-w-4xl mx-auto px-4 py-3">
+                <div class="flex items-end gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 focus-within:ring-2 focus-within:ring-brand-500 transition p-2">
+                    <textarea id="queryInput"
+                              rows="1"
+                              placeholder="Ask a question about your documents..."
+                              maxlength="10000"
+                              class="flex-1 bg-transparent border-0 resize-none outline-none text-sm leading-relaxed px-2 py-2 max-h-40"></textarea>
+
+                    <button id="sendBtn"
+                            disabled
+                            class="shrink-0 w-9 h-9 rounded-lg bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 mt-2 px-1">
+                    <span id="charCount">0 / 10000</span>
+                    <span id="statusIndicator" class="flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Ready</span>
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- Custom JS -->
+<script src="/static/js/app.js"></script>
+
+</body>
+</html>

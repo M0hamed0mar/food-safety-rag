@@ -1,0 +1,52 @@
+﻿# ============================================================
+# Docker build context exclusions
+# ============================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtualenv
+venv/
+.venv/
+env/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Project data
+data/uploaded_docs/*
+data/faiss_index/*
+data/reports/*
+logs/*
+*.log
+*.db
+*.db-shm
+*.db-wal
+
+# Model artifacts
+*.faiss
+*.meta
+*.pkl
+*.pickle
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+
+# Docs / outputs
+Terminal Output/
+*.bak
+*.original
+_old/
+docs/

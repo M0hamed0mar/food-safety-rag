@@ -1,0 +1,47 @@
+﻿# ============================================================
+# Food Safety RAG - Docker Compose
+# ============================================================
+# Usage:
+#   docker compose up --build        # start everything
+#   docker compose down              # stop
+#   docker compose logs -f           # follow logs
+# ============================================================
+
+services:
+  rag-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: food-safety-rag:latest
+    container_name: food-safety-rag
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Override the paths inside the container
+      DATA_DIR: /app/data
+      LOGS_DIR: /app/logs
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      # Optional: increase worker count
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      # Persist uploaded docs, index, and reports
+      - ./data/uploaded_docs:/app/data/uploaded_docs
+      - ./data/faiss_index:/app/data/faiss_index
+      - ./data/reports:/app/data/reports
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - rag-net
+
+networks:
+  rag-net:
+    driver: bridge

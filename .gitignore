@@ -1,0 +1,110 @@
+﻿# ============================================================
+# Food Safety RAG - .gitignore
+# ============================================================
+
+# --- Environment ---
+.env
+.env.local
+.env.*.local
+*.env
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
+ENV/
+virtualenv/
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# --- Testing / Coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# --- Project Data ---
+data/uploaded_docs/
+data/faiss_index/
+logs/
+*.log
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# --- ML Models / Heavy artifacts ---
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.h5
+*.onnx
+cache/
+
+# --- Build artifacts ---
+*.faiss
+*.meta
+*.pkl
+*.pickle
+
+# ============================================================
+# Project-specific additions
+# ============================================================
+
+# Terminal outputs (debug session files)
+Terminal Output/
+
+# Benchmark reports (regenerated on each run)
+data/reports/*.json
+data/reports/*.md
+
+# Eval cache
+data/eval_cache.json
+
+# Chat DB (runtime)
+data/chats.db
+
+# Backup files
+*.bak
+*.original
+
+# Old code archive
+_old/
+
+# README backup
+README.md.bak
+
+# ============================================================
